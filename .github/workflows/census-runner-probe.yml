@@ -1,0 +1,25 @@
+name: Census Runner Probe
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.run-census-probe'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python --version
+          curl --fail --location --max-time 30 https://trends.builtwith.com/websitelist/Shopify/Ireland -o builtwith.html
+          test -s builtwith.html
+          echo ready > runner-ready.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: census-runner-ready
+          path: runner-ready.txt
